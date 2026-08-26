@@ -31,20 +31,53 @@ Fusarium-comparative-genomics/
 │
 ├── 03_OrthoFinder_6_Genomes/
 │   ├── README.md
+│   │
 │   └── scripts/
 │       ├── prepare_proteomes/
+│       │   └── fix_headers.py
+│       │
 │       ├── orthofinder/
+│       │   └── run_orthofinder_6.sh
+│       │
 │       ├── single_copy_orthologues/
-│       └── phylogenomics/
+│       │   └── extract_single_copy.sh
+│       │
+│       ├── phylogenomics/
+│       │   ├── concat_by_species.py
+│       │   ├── validate_concatenation.py
+│       │   └── run_raxml_ng.sh
+│       │
+│       └── visualization/
+│           ├── plot_species_tree.R
+│           ├── plot_orthogroup_statistics.R
+│           └── plot_single_copy_orthologues.R
 │
 ├── 04_OrthoFinder_36_Genomes/
 │   ├── README.md
+│   │
 │   └── scripts/
 │       ├── prepare_proteomes/
-│       ├── chunking/
+│       │
 │       ├── orthofinder/
+│       │   └── run_orthofinder_36.sh
+│       │
+│       ├── chunking/
+│       │   ├── run_fusarium36_trees_checkpoint.sh
+│       │   └── run_fusarium36_species_tree_checkpoint.sh
+│       │
 │       ├── merge_results/
-│       └── downstream_analysis/
+│       │
+│       ├── downstream_analysis/
+│       │   ├── FUSARIUM36_STEP23_FINAL_QC.sh
+│       │   ├── prepare_gene_family_matrix/
+│       │   ├── orthogroup_statistics/
+│       │   └── comparative_tables/
+│       │
+│       └── visualization/
+│           ├── plot_species_tree.R
+│           ├── plot_orthogroup_statistics.R
+│           ├── plot_gene_family_distribution.R
+│           └── plot_orthologues.R
 │
 ├── 05_CAFE/
 │   ├── README.md
