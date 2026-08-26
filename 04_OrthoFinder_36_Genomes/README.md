@@ -144,24 +144,16 @@ This allows the workflow to be inspected and reproduced without unnecessarily re
 │
 └── scripts/
     │
-    ├── prepare_proteomes/
-    │
     ├── orthofinder/
     │   └── run_orthofinder_36.sh
     │
     ├── tree_inference/
     │   ├── run_fusarium36_trees_checkpoint.sh
-    │   └── run_fusarium36_species_tree_checkpoint.sh
+    │   ├── run_fusarium36_species_tree_checkpoint.sh
+    │   └── run_fusarium36_species_tree_fast.sh
     │
-    ├── downstream_analysis/
-    │   └── FUSARIUM36_STEP23_FINAL_QC.sh
-    │
-    └── visualization/
-        ├── plot_species_tree.R
-        ├── plot_orthogroup_statistics.R
-        ├── plot_gene_family_distribution.R
-        └── plot_orthologues.R
-
+    └── downstream_analysis/
+        └── run_fusarium36_step24_corrected.sh
 Software
 OrthoFinder v3.1.5
 DIAMOND
