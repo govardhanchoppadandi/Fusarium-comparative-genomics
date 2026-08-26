@@ -15,6 +15,11 @@ Fusarium-comparative-genomics/
 │
 ├── 01_Genome_Quality/
 │   └── BUSCO/
+│       ├── README.md
+│       └── scripts/
+│           ├── run_busco_genomes.sh
+│           ├── run_busco_proteins.sh
+│           └── run_busco_proteins_resume.sh
 │
 ├── 02_Phylogeny/
 │   └── scripts/
