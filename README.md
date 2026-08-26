@@ -28,6 +28,7 @@ Fusarium-comparative-genomics/
 │       ├── concatenation/
 │       ├── tree_inference/
 │       └── visualization/
+│
 ├── 03_OrthoFinder_6_Genomes/
 │   ├── README.md
 │   └── scripts/
@@ -52,7 +53,6 @@ Fusarium-comparative-genomics/
 │
 ├── 04_OrthoFinder_36_Genomes/
 │   ├── README.md
-│   │
 │   └── scripts/
 │       ├── prepare_proteomes/
 │       │
@@ -71,8 +71,6 @@ Fusarium-comparative-genomics/
 │           ├── plot_orthogroup_statistics.R
 │           ├── plot_gene_family_distribution.R
 │           └── plot_orthologues.R
-│
-
 │
 ├── 05_CAFE/
 │   ├── README.md
