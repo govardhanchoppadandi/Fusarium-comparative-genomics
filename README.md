@@ -73,17 +73,16 @@ Fusarium-comparative-genomics/
 │       └── visualization/
 │           ├── Circos/
 │           │     └── plot_circos.   
-│           │── Heatmap/
+│           └── Heatmap/
 │                  └── plot_jaccard_heatmap.R        
 │           
 ├── 05_CAFE/
 │   ├── README.md
 │   └── scripts/
-│       ├── prepare_gene_family_matrix/
-│       ├── cafe/
-│       ├── expansion/
-│       ├── contraction/
-│       └── visualization/
+│       ├── run_CAFE5_Fusarium36.sh
+│       ├── plot_CAFE5_Fusarium36_publication.R
+│       │
+│       └── README.md
 │
 ├── 06_ncRNA/
 │   ├── README.md
