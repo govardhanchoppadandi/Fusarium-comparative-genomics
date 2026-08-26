@@ -143,5 +143,4 @@ Fusarium-comparative-genomics/
 │   ├── tables/
 │   └── summary/
 │
-└── supplementary/
-    └── tables/
+└──workflow.png
