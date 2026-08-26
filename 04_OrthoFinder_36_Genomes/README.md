@@ -12,12 +12,9 @@ The analysis was performed as a checkpointed workflow so that completed computat
 
 ## Input
 
-The analysis used predicted protein sequences from 36 *Fusarium* genomes.
+The analysis used predicted protein sequences from 36 Fusarium genomes.
 
-Protein FASTA files were prepared and standardized before OrthoFinder analysis.
-
-The input consisted of one protein FASTA file per genome/species.
-
+Protein FASTA files were prepared and standardized before OrthoFinder analysis. The input consisted of one protein FASTA file per genome/species.
 ---
 
 ## OrthoFinder analysis
