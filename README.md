@@ -70,11 +70,11 @@ Fusarium-comparative-genomics/
 │       │   └── run_fusarium36_step24_corrected.sh
 │       │
 │       └── visualization/
-│           ├── plot_species_tree.R
-│           ├── plot_orthogroup_statistics.R
-│           ├── plot_gene_family_distribution.R
-│           └── plot_orthologues.R
-│
+│           ├── Circos/
+│           │     └── plot_circos.   
+│           │── Heatmap/
+│                  └── plot_jaccard_heatmap.R        
+│           
 ├── 05_CAFE/
 │   ├── README.md
 │   └── scripts/
