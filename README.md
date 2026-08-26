@@ -54,6 +54,7 @@ Fusarium-comparative-genomics/
 ├── 04_OrthoFinder_36_Genomes/
 │   ├── README.md
 │   └── scripts/
+│       │
 │       ├── prepare_proteomes/
 │       │
 │       ├── orthofinder/
@@ -61,10 +62,12 @@ Fusarium-comparative-genomics/
 │       │
 │       ├── tree_inference/
 │       │   ├── run_fusarium36_trees_checkpoint.sh
-│       │   └── run_fusarium36_species_tree_checkpoint.sh
+│       │   ├── run_fusarium36_species_tree_checkpoint.sh
+│       │   └── run_fusarium36_species_tree_fast.sh
 │       │
 │       ├── downstream_analysis/
-│       │   └── FUSARIUM36_STEP23_FINAL_QC.sh
+│       │   ├── run_fusarium36_step24.sh
+│       │   └── run_fusarium36_step24_corrected.sh
 │       │
 │       └── visualization/
 │           ├── plot_species_tree.R
