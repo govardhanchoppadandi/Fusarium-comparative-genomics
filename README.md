@@ -47,9 +47,10 @@ Fusarium-comparative-genomics/
 │       │   └── run_raxml_ng.sh
 │       │
 │       └── visualization/
-│           ├── plot_species_tree.R
-│           ├── plot_orthogroup_statistics.R
-│           └── plot_single_copy_orthologues.R
+│           ├── plot_orthology_gene_duplication.R
+│           ├──circos/
+│                  └── plot_duplication_circos.R
+│          
 │
 ├── 04_OrthoFinder_36_Genomes/
 │   ├── README.md
