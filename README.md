@@ -28,10 +28,8 @@ Fusarium-comparative-genomics/
 │       ├── concatenation/
 │       ├── tree_inference/
 │       └── visualization/
-│
 ├── 03_OrthoFinder_6_Genomes/
 │   ├── README.md
-│   │
 │   └── scripts/
 │       ├── prepare_proteomes/
 │       │   └── fix_headers.py
@@ -61,23 +59,20 @@ Fusarium-comparative-genomics/
 │       ├── orthofinder/
 │       │   └── run_orthofinder_36.sh
 │       │
-│       ├── chunking/
+│       ├── tree_inference/
 │       │   ├── run_fusarium36_trees_checkpoint.sh
 │       │   └── run_fusarium36_species_tree_checkpoint.sh
 │       │
-│       ├── merge_results/
-│       │
 │       ├── downstream_analysis/
-│       │   ├── FUSARIUM36_STEP23_FINAL_QC.sh
-│       │   ├── prepare_gene_family_matrix/
-│       │   ├── orthogroup_statistics/
-│       │   └── comparative_tables/
+│       │   └── FUSARIUM36_STEP23_FINAL_QC.sh
 │       │
 │       └── visualization/
 │           ├── plot_species_tree.R
 │           ├── plot_orthogroup_statistics.R
 │           ├── plot_gene_family_distribution.R
 │           └── plot_orthologues.R
+│
+
 │
 ├── 05_CAFE/
 │   ├── README.md
