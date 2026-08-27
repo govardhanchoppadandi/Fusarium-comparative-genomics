@@ -82,6 +82,10 @@ Fusarium-comparative-genomics/
 │   └── scripts/
 │       └── RIPCAL/
 │           └── run_RIP_all.sh
+├── results/
+│       └── TE_RIP/
+│             ├── TE_RIP_all_genomes_summary.tsv
+│             └── TE_RIP_all_genomes_summary.xlsx
 │
 ├── 09_McClintock/
 │   ├── README.md
