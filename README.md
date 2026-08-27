@@ -118,14 +118,15 @@ Fusarium-comparative-genomics/
 │       ├── orthogroup_statistics/
 │       └── comparative_tables/
 │
-├── 12_Figure_Generation/
-│   ├── README.md
-│   ├── Figure_1/
-│   ├── Figure_2/
-│   ├── Figure_3/
-│   ├── Figure_4/
-│   ├── Figure_5/
-│   └── Supplementary_Figures/
+├── 12_Telomere_Analysis/
+│       │
+│       ├── README.md
+│       │
+│       └── scripts/
+│              ├── 01_run_tidk.sh
+│              ├── 02_merge_tidk_results.py
+│              ├── 03_summarise_telomeres.py
+│              └── 04_generate_results_text.py
 │
 ├── 13_Effector_Prediction/
 │   ├── README.md
