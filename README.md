@@ -7,10 +7,6 @@ This repository contains the reproducible computational workflows, scripts, meta
 ```text
 Fusarium-comparative-genomics/
 │
-├── .github/
-│   └── workflows/
-│       └── pylint.yml
-│
 ├── 01_Genome_Quality/
 │   └── BUSCO/
 │       ├── README.md
