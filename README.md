@@ -92,26 +92,24 @@ Fusarium-comparative-genomics/
 │       ├── KO_annotation/
 │       ├── pathway_annotation/
 │       └── summary/
-├── 11_Genome_Circos/
+├── 11_Circos_Plot/
+│     ├── README.md
+│     └── scripts/
+│           ├── circos_input_builder/
+│           │     └── TNW1_complete_circos_builder.py
+│           │
+│           └── circos_plot/
+│                   └── TNW1_final_compact_circos.R
 │
-├── README.md
-│
-├── scripts/
-│   ├── circos_input_builder/
-│   │   └── DMW8/TNW1_complete_circos_builder.py
-│   │
-│   └── circos_plot/
-│       └── DMW8/TNW1_FINAL_COMPACT.R
+└── example_inputs/
+    └── README.md
+│       
 │
 ├── input/
 │   └── README.md
 │
 └── results/
     └── README.md
-
-
-
-
 ├── 11_Comparative_Genomics/
 │   ├── README.md
 │   └── scripts/
