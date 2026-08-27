@@ -92,7 +92,7 @@ Fusarium-comparative-genomics/
 │       ├── KO_annotation/
 │       ├── pathway_annotation/
 │       └── summary/
-├── 11_Whole_genome_Circos_Plot/
+├── 11_Genome_Circos_Plot/
 │     ├── README.md
 │     └── scripts/
 │           ├── circos_input_builder/
