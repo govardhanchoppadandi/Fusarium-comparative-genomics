@@ -73,19 +73,17 @@ Fusarium-comparative-genomics/
 ├── 07_Transposable_Elements/
 │   ├── README.md
 │   ├── scripts/
-│   │    └── earl_grey/
-│   │           └── run_all_earlgrey.sh  
+│   │   └── earl_grey/
+│   │       └── run_all_earlgrey.sh
 │   └── summary/
 │
 ├── 08_RIP_Analysis/
 │   ├── README.md
 │   └── scripts/
-│       └── RIPCAL/
-│           └── run_RIP_all.sh
-├── results/
-│       └── TE_RIP/
-│             ├── TE_RIP_all_genomes_summary.tsv
-│             └── TE_RIP_all_genomes_summary.xlsx
+│       ├── RIPCAL/
+│       │   └── run_RIP_all.sh
+│       └── summary/
+│           └── make_TE_RIP_results_table.py
 │
 ├── 09_McClintock/
 │   ├── README.md
@@ -97,29 +95,32 @@ Fusarium-comparative-genomics/
 │       ├── KO_annotation/
 │       ├── pathway_annotation/
 │       └── summary/
+│
 ├── 11_Genome_Circos_Plot/
-│     ├── README.md
-│     └── scripts/
-│           ├── circos_input_builder/
-│           │     └── TNW1_complete_circos_builder.py
-│           │
-│           └── circos_plot/
-│                   └── TNW1_final_compact_circos.R
+│   ├── README.md
+│   └── scripts/
+│       ├── circos_input_builder/
+│       │   └── TNW1_complete_circos_builder.py
+│       └── circos_plot/
+│           └── TNW1_final_compact_circos.R
 │
 ├── 12_Telomere_Analysis/
-│       │
-│       ├── README.md
-│       │
-│       └── scripts/
-│              ├── 01_run_tidk.sh
-│              ├── 02_merge_tidk_results.py
-│              ├── 03_summarise_telomeres.py
-│              └── 04_generate_results_text.py
+│   ├── README.md
+│   └── scripts/
+│       ├── 01_run_tidk.sh
+│       ├── 02_merge_tidk_results.py
+│       ├── 03_summarise_telomeres.py
+│       └── 04_generate_results_text.py
 │
 ├── 13_Effector_Prediction/
 │   ├── README.md
 │   └── scripts/
 │       └── fasta_preparation/
+│
+├── results/
+│   └── TE_RIP/
+│       ├── TE_RIP_all_genomes_summary.tsv
+│       └── TE_RIP_all_genomes_summary.xlsx
 │
 ├── workflow.png
 ├── README.md
