@@ -73,8 +73,9 @@ Fusarium-comparative-genomics/
 ├── 07_Transposable_Elements/
 │   ├── README.md
 │   └── scripts/
-│       ├── earl_grey/
-│       └── summary/
+│   │    └── earl_grey/
+│   │           └── run_all_earlgrey.sh  
+│   └── summary/
 │
 ├── 08_RIP_Analysis/
 │   ├── README.md
