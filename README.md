@@ -92,7 +92,7 @@ Fusarium-comparative-genomics/
 │       ├── KO_annotation/
 │       ├── pathway_annotation/
 │       └── summary/
-├── 11_Circos_Plot/
+├── 11_Whole_genome_Circos_Plot/
 │     ├── README.md
 │     └── scripts/
 │           ├── circos_input_builder/
@@ -100,23 +100,6 @@ Fusarium-comparative-genomics/
 │           │
 │           └── circos_plot/
 │                   └── TNW1_final_compact_circos.R
-│
-└── example_inputs/
-    └── README.md
-│       
-│
-├── input/
-│   └── README.md
-│
-└── results/
-    └── README.md
-├── 11_Comparative_Genomics/
-│   ├── README.md
-│   └── scripts/
-│       ├── genome_statistics/
-│       ├── gene_statistics/
-│       ├── orthogroup_statistics/
-│       └── comparative_tables/
 │
 ├── 12_Telomere_Analysis/
 │       │
@@ -132,18 +115,6 @@ Fusarium-comparative-genomics/
 │   ├── README.md
 │   └── scripts/
 │       └── fasta_preparation/
-│
-├── data/
-│   ├── metadata/
-│   ├── genome_accessions/
-│   └── input_information/
-│
-├── results/
-│   ├── tables/
-│   └── summary/
-│
-├── supplementary/
-│   └── tables/
 │
 ├── workflow.png
 ├── README.md
@@ -166,8 +137,8 @@ Fusarium-comparative-genomics/
 | `08_RIP_Analysis` | Repeat-induced point mutation analysis and RIP–TE analysis |
 | `09_McClintock` | Transposable-element insertion analysis |
 | `10_KEGG` | KEGG/KO annotation and pathway analysis |
-| `11_Comparative_Genomics` | Genome, gene, orthogroup, and comparative statistics |
-| `12_Figure_Generation` | Generation of manuscript and supplementary figures |
+| `11_Whole_genome_Circos_Plot` | Circular genome visualisation (Circos plots) of the Fusarium isolates F. graminearum (TNW1; Figure 7) and F.avenaceum (DMW8; Figure 8), illustrating genome-wide organisation and functional genomic features. The outer ring represents scaffold organisation, numbered sequentially. Subsequent tracks depict GC content density, gene density, transposable element (TE) density, RIP-associated regions, GO-annotated genes, TE-rich regions/classes, AT-rich regions, predicted secondary metabolite biosynthetic gene clusters (antiSMASH), young and old TE insertions, TE–RIP overlap regions, and rRNA/tRNA loci. Colored ribbons in the centre indicate intra-genomic repetitive or syntenic relationships based on sequence similarity. To improve visual clarity, minor scaffolds (<1 Mb) were excluded. |
+| `12_Telomere_Analysis` | finding telomear repeats |
 | `13_Effector_Prediction` | Preparation of protein sequences for downstream effector prediction |
 
 ## Data organization
