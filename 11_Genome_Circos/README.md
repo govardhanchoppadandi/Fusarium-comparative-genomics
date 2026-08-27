@@ -1,4 +1,4 @@
-# Circos Plot
+# whole genome Circos Plot
 
 ## Overview
 
