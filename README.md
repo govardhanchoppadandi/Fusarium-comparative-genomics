@@ -1,8 +1,16 @@
-# Fusarium Comparative Genomics — Repository Structure
+# Fusarium Comparative Genomics
 
-This repository contains the reproducible computational workflows, scripts, metadata, and figure-generation code used for the comparative genomic analyses of wheat-infecting *Fusarium* species.
+This repository contains the reproducible computational workflows, scripts,
+metadata, and figure-generation code used for the comparative genomic
+analyses of wheat-infecting Fusarium species.
 
-## Repository structure
+## Overall Workflow
+
+The overall experimental and computational workflow used in this study is shown below.
+
+![Fusarium Comparative Genomics Workflow](workflow.png)
+
+## Repository Structure
 
 ```text
 Fusarium-comparative-genomics/
