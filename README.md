@@ -1,12 +1,14 @@
-# Fusarium Comparative Genomics
+So the figure section and repository structure should be formatted like this:
 
-This repository contains the reproducible computational workflows, scripts, metadata, and figure-generation code used for comparative genomic analyses of wheat-infecting *Fusarium* species.
-
+:::writing{variant="document" id="31857"}
 ## Overall Workflow
 
 The overall experimental and computational workflow used in this study is shown below.
 
 ![Fusarium Comparative Genomics Workflow](workflow.png)
+
+**Figure 1. Overall workflow of the *Fusarium* comparative genomics study.** The workflow summarizes the major computational analyses performed in this study, including genome quality assessment, phylogenetic analysis, orthology and gene-family evolution, non-coding RNA analysis, transposable-element and RIP analysis, KEGG pathway annotation, genome visualization, telomere analysis, effector prediction, and functional annotation of fungal proteins.
+
 
 ## Repository Structure
 
