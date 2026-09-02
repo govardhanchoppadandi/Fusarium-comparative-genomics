@@ -115,7 +115,7 @@ The `14_ARI_Wheat_Pathology_Functional_Annotation` module provides an integrated
 **Agharkar Research Institute, Pune**
 
 **Developed by:**
-**Dr. Sudhir Navathe**
+**Dr. Sudhir Navathe** ,
 **Govardhan Choppadandi**
 
 ### Citation
