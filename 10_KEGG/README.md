@@ -1,417 +1,335 @@
-# KEGG Pathway Annotation
+# KAAS → KEGG Pathway Analyzer
 
-This module documents the KEGG pathway annotation workflow used in the *Fusarium* comparative genomics analysis.
+A reproducible command-line and local Streamlit application for processing large KAAS protein annotation results and generating KEGG functional and pathway annotations.
 
-The workflow uses **Biopython KEGG REST API** calls to retrieve functional information for KO (KEGG Orthology) identifiers assigned by KAAS.
+## Overview
 
-## Directory structure
+The KAAS → KEGG Pathway Analyzer is designed for large fungal proteomes where the KAAS web result page may become difficult to open or download because of the large number of protein identifiers.
+
+The application performs the following workflow:
+
+**KAAS result URL → query.ko download → FASTA ID validation → Protein–KO mapping → KO annotation → EC information → KEGG pathways → Excel output**
+
+The workflow was developed for large-scale fungal comparative genomics analyses and can process hundreds of thousands of protein identifiers.
+
+---
+
+## Input
+
+The application requires two inputs:
+
+### 1. Completed KAAS result URL
+
+A completed KAAS job URL, for example:
 
 ```text
-10_KEGG/
-├── README.md
-└── scripts/
-    ├── KO_annotation/
-    ├── pathway_annotation/
-    └── summary/
+https://www.genome.jp/kaas-bin/kaas_main?mode=user&id=YOUR_JOB_ID&key=YOUR_JOB_KEY
+```
+
+The KAAS job must already be completed.
+
+### 2. Original protein FASTA file
+
+The original FASTA file submitted to KAAS.
+
+Example:
+
+```text
+/mnt/d/interpro/combind fasta.faa
+```
+
+The FASTA identifiers are matched against the identifiers contained in the KAAS `query.ko` result.
+
+---
+
+## Output
+
+The application generates a results directory containing the processed KAAS and KEGG annotations.
+
+Typical outputs include:
+
+```text
+results/
+├── query.ko
+├── KAAS_Protein_KO.xlsx
+├── KEGG_Pathway_Annotation.xlsx
+├── KO_Summary.xlsx
+├── pathway_summary.xlsx
+└── logs/
+```
+
+The exact files depend on the selected workflow and processing stage.
+
+The main annotation table contains:
+
+| Column      | Description                                |
+| ----------- | ------------------------------------------ |
+| Protein_ID  | Protein identifier from the original FASTA |
+| KO          | KEGG Orthology identifier                  |
+| Enzyme      | KEGG enzyme/function information           |
+| EC          | EC number where available                  |
+| PathwayID   | KEGG pathway identifier                    |
+| PathwayName | KEGG pathway name                          |
+
+A protein associated with multiple pathways may occur in multiple rows.
+
+---
+
+# Installation
+
+## Requirements
+
+The application is designed to run locally under Linux/Ubuntu or WSL Ubuntu.
+
+Required software:
+
+* Python 3
+* pip
+* Streamlit
+* pandas
+* openpyxl
+* requests
+
+The required Python packages are listed in:
+
+```text
+requirements.txt
 ```
 
 ---
 
-# 1. Purpose
+## Recommended installation using Conda
 
-The workflow takes a KAAS GeneID → KO mapping file and retrieves KEGG information for the identified KO terms.
-
-The pipeline:
-
-1. Reads GeneID → KO assignments from KAAS.
-2. Removes the `ko:` prefix when present.
-3. Identifies unique KO IDs.
-4. Retrieves KEGG KO information using Biopython.
-5. Extracts:
-   - Enzyme information
-   - EC numbers
-   - KEGG pathway IDs
-   - KEGG pathway names
-6. Caches downloaded KO information.
-7. Reuses cached records during reruns.
-8. Generates a final Excel annotation table.
-
----
-
-# 2. Software requirements
-
-Run the workflow in Python.
-
-Required packages:
-
-- Python 3
-- Biopython
-- pandas
-- openpyxl
-
-Install the required packages:
+Create an environment:
 
 ```bash
-pip install biopython pandas openpyxl
+conda create -n kaas_env python=3.12 -y
 ```
 
-If using a Conda environment:
+Activate it:
 
 ```bash
-conda install -c conda-forge biopython pandas openpyxl
+conda activate kaas_env
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Verify installation:
+
+```bash
+python -c "import streamlit,pandas,openpyxl,requests; print('ALL OK')"
+```
+
+Expected:
+
+```text
+ALL OK
 ```
 
 ---
 
-# 3. Script
+# Method 1 — Command-line pipeline
 
-The main script is:
+The command-line workflow is recommended for large datasets.
 
-```text
-kegg_pathway_annotation.py
+Run:
+
+```bash
+python kaas_kegg_pipeline.py \
+  --kaas-url "YOUR_KAAS_RESULT_URL" \
+  --fasta "/path/to/proteins.faa" \
+  --output "/path/to/results" \
+  --batch-size 10 \
+  --delay 1
 ```
-
-Recommended repository location:
-
-```text
-10_KEGG/scripts/pathway_annotation/kegg_pathway_annotation.py
-```
-
----
-
-# 4. Input
-
-The input is a KAAS KO mapping file:
-
-```text
-kaas list.txt
-```
-
-Expected format:
-
-```text
-GeneID    KO
-gene_001  ko:K00844
-gene_002  ko:K00001
-```
-
-The file should contain two tab-separated columns:
-
-```text
-GeneID <TAB> KO
-```
-
-The pipeline automatically removes the `ko:` prefix.
-
-For example:
-
-```text
-ko:K00844
-```
-
-becomes:
-
-```text
-K00844
-```
-
----
-
-# 5. Configure file paths
-
-Edit the following variables in the Python script:
-
-```python
-INPUT_FILE = r"E:\1 Manuscript Fusarium genome\SEQ ANALYSIS\tnw1 seq analysis\KAAS\kaas list.txt"
-
-OUTPUT_FILE = r"E:\1 Manuscript Fusarium genome\SEQ ANALYSIS\tnw1 seq analysis\KAAS\Biopython_KEGG_Pathways.xlsx"
-
-CACHE_FILE = r"E:\1 Manuscript Fusarium genome\SEQ ANALYSIS\tnw1 seq analysis\KAAS\kegg_cache.pkl"
-```
-
-Change these paths if the files are stored elsewhere.
-
----
-
-# 6. KEGG information retrieved
-
-For each KO identifier, the script retrieves information from the KEGG KO entry.
-
-The final table contains:
-
-| Column | Description |
-|---|---|
-| `GeneID` | Gene identifier from the KAAS file |
-| `KO` | KEGG Orthology identifier |
-| `Enzyme` | Enzyme/name information from KEGG |
-| `EC` | EC number information |
-| `PathwayID` | KEGG pathway identifier |
-| `PathwayName` | KEGG pathway name |
-
-A gene associated with multiple pathways is represented in multiple rows.
-
----
-
-# 7. KEGG REST API
-
-The script uses Biopython's KEGG REST interface:
-
-```python
-from Bio.KEGG import REST
-```
-
-For each KO, the workflow requests:
-
-```text
-ko:Kxxxxx
-```
-
-from KEGG.
-
-Because the workflow accesses the KEGG server repeatedly, the script includes a delay between new requests.
-
----
-
-# 8. Cache system
-
-The pipeline creates:
-
-```text
-kegg_cache.pkl
-```
-
-The cache stores previously retrieved KO information.
-
-This prevents already processed KO IDs from being downloaded again.
-
-During a rerun, the terminal may show:
-
-```text
-[1/XXXX] K00844 → Cached
-```
-
-instead of making another KEGG request.
-
-This is particularly useful when the KAAS file contains many KO identifiers or when the analysis needs to be restarted.
-
----
-
-# 9. Running the analysis
-
-Navigate to the script directory or provide the full script path.
 
 Example:
 
 ```bash
-python kegg_pathway_annotation.py
+python kaas_kegg_pipeline.py \
+  --kaas-url "https://www.genome.jp/kaas-bin/kaas_main?mode=user&id=YOUR_JOB_ID&key=YOUR_JOB_KEY" \
+  --fasta "/mnt/d/interpro/combind fasta.faa" \
+  --output "/home/USER/Fusarium-comparative-genomics/10_KEGG/KAAS_KEGG_Analyzer/results" \
+  --batch-size 10 \
+  --delay 1
 ```
 
-The pipeline will report progress such as:
+Replace:
 
 ```text
-Loading KO file...
-
-Total unique KO IDs = XXXX
-
-Loading existing cache...
-
-Fetching KEGG annotations...
-
-[1/XXXX] K00844 → Cached
-[2/XXXX] Fetching K00001... OK
+YOUR_JOB_ID
+YOUR_JOB_KEY
+/path/to/proteins.faa
+/path/to/results
 ```
+
+with the appropriate values.
 
 ---
 
-# 10. Cache saving
+# Method 2 — Local Streamlit application
 
-The cache is periodically saved during processing.
+The Streamlit application provides a local browser interface while all processing occurs on the Ubuntu/WSL system.
 
-The script saves the cache every 50 newly processed KO records and also saves it again after the complete analysis.
-
-Therefore, if the process is interrupted, previously completed KO records can be reused.
-
----
-
-# 11. Expected output
-
-The main output is:
-
-```text
-Biopython_KEGG_Pathways.xlsx
-```
-
-The cache file is:
-
-```text
-kegg_cache.pkl
-```
-
-Expected output:
-
-```text
-KEGG/
-├── Biopython_KEGG_Pathways.xlsx
-└── kegg_cache.pkl
-```
-
-The Excel file contains the final GeneID–KO–enzyme–EC–pathway annotation table.
-
----
-
-# 12. Example final table
-
-```text
-GeneID    KO       Enzyme       EC       PathwayID    PathwayName
-gene_001  K00844   ...          ...      mapXXXXX     ...
-gene_002  K00001   ...          ...      mapXXXXX     ...
-```
-
-If one KO is associated with multiple pathways, the same GeneID/KO can occur in multiple rows.
-
----
-
-# 13. Recommended repository organization
-
-Keep the executable Python script under:
-
-```text
-10_KEGG/scripts/pathway_annotation/
-```
-
-Use:
-
-```text
-10_KEGG/scripts/KO_annotation/
-```
-
-for future scripts that specifically perform KO assignment or KO preprocessing.
-
-Use:
-
-```text
-10_KEGG/scripts/summary/
-```
-
-for downstream scripts that summarize pathway counts, KO distributions, or generate figures/tables.
-
----
-
-# 14. Suggested workflow
-
-```text
-KAAS
-  │
-  ▼
-GeneID → KO mapping
-  │
-  ▼
-kaas list.txt
-  │
-  ▼
-Biopython KEGG REST
-  │
-  ├── Enzyme information
-  ├── EC numbers
-  └── Pathway information
-  │
-  ▼
-Cached KO records
-  │
-  ▼
-Biopython_KEGG_Pathways.xlsx
-  │
-  ▼
-Downstream pathway summary
-```
-
----
-
-# 15. Reproducibility
-
-Record the following information for the final analysis:
-
-- Python version
-- Biopython version
-- pandas version
-- openpyxl version
-- KAAS input file
-- KEGG annotation date
-- Script name
-- Output file name
-
-Useful commands:
+Start the application:
 
 ```bash
-python --version
+./run_app.sh
 ```
+
+or:
 
 ```bash
-python -c "import Bio, pandas, openpyxl; print('Biopython:', Bio.__version__); print('pandas:', pandas.__version__); print('openpyxl:', openpyxl.__version__)"
+streamlit run app.py
 ```
+
+The application will provide a local address similar to:
+
+```text
+http://localhost:8502
+```
+
+Open this address in a web browser on the same computer.
+
+The application does not require uploading the FASTA or KAAS result to an external application server. The analysis is performed locally.
 
 ---
 
-# 16. Important considerations
+# Large dataset processing
 
-## KEGG access
+This workflow is intended for large proteomes.
 
-This workflow depends on KEGG REST access. Internet connectivity is required when a KO is not already present in the cache.
-
-## Do not delete the cache unnecessarily
-
-If the analysis is rerun, retaining:
+For example, a KAAS result containing:
 
 ```text
-kegg_cache.pkl
+424,015 protein IDs
 ```
 
-avoids unnecessary repeated requests.
+can be processed without attempting to display the complete KAAS result page in the browser.
 
-## Large KO datasets
+The workflow directly retrieves the KAAS `query.ko` file and processes it as a text file.
 
-For large KAAS datasets, the analysis can take considerable time because new KO records are requested individually with a delay between requests.
-
-## Raw/intermediate data
-
-Do not commit large KAAS datasets, cache files, or large generated Excel files to GitHub unless they are intentionally included as project data.
+This avoids the problem of loading hundreds of thousands of identifiers into the KAAS HTML webpage.
 
 ---
 
-# 17. Final output for manuscript analysis
+# FASTA–KAAS validation
 
-The primary manuscript-ready annotation table is:
+Before KEGG annotation, the workflow compares the original FASTA identifiers with the identifiers contained in the KAAS result.
 
-```text
-Biopython_KEGG_Pathways.xlsx
-```
-
-This table can subsequently be used to calculate:
-
-- Number of genes assigned to each KO
-- Number of genes assigned to each pathway
-- Pathway-level gene distributions
-- KO-level summaries
-- Comparative pathway statistics between *Fusarium* genomes
-
-Downstream summary and visualization scripts should be stored under:
+The validation reports:
 
 ```text
-10_KEGG/scripts/summary/
+FASTA IDs
+KAAS IDs
+Matching IDs
+FASTA IDs missing in KAAS
+KAAS IDs not in FASTA
+Proteins with KO
+Proteins without KO
+Unique KO IDs
 ```
+
+For a valid analysis, the FASTA and KAAS identifiers should correspond appropriately.
 
 ---
 
-# 18. Module summary
+# KO annotation
+
+The KAAS `query.ko` file is parsed to create a Protein → KO mapping.
+
+Example:
 
 ```text
-10_KEGG/
+Protein_ID              KO
+Fgram_0343|g9.t1        K09967
+```
+
+Proteins without a KO assignment are retained and reported separately.
+
+---
+
+# KEGG annotation
+
+Unique KO identifiers are processed against the KEGG database.
+
+The workflow retrieves available information including:
+
+* KO identifier
+* functional/enzyme name
+* EC number
+* KEGG pathway identifier
+* KEGG pathway name
+
+Multiple proteins can share the same KO identifier.
+
+A single KO can also be associated with multiple pathways.
+
+---
+
+# Caching
+
+KEGG annotation results are cached locally to avoid unnecessarily repeating requests during reruns.
+
+This is particularly important for large datasets containing thousands of unique KO identifiers.
+
+If the analysis is interrupted, previously processed KO information can be reused from the cache.
+
+---
+
+# Recommended directory structure
+
+```text
+KAAS_KEGG_Analyzer/
+│
 ├── README.md
-└── scripts/
-    ├── KO_annotation/
-    ├── pathway_annotation/
-    │   └── kegg_pathway_annotation.py
-    └── summary/
+├── app.py
+├── kaas_kegg_pipeline.py
+├── run_app.sh
+├── requirements.txt
+└── results/
+    └── .gitkeep
 ```
 
-This module forms the KEGG functional annotation component of the **Fusarium Comparative Genomics** workflow.
+Generated results should generally not be committed to the GitHub repository.
+
+---
+
+# Reproducibility
+
+For reproducibility, record:
+
+1. KAAS job ID
+2. KAAS result URL
+3. Original FASTA filename
+4. Number of FASTA sequences
+5. Number of KAAS entries
+6. Number of proteins assigned to KOs
+7. Number of unique KO identifiers
+8. KEGG processing date
+9. Software/environment versions
+10. Output files used for downstream analysis
+
+---
+
+# Data privacy and credentials
+
+Do not commit private KAAS job URLs, API credentials, personal access information, or large unpublished datasets to a public repository.
+
+For published analyses, provide the relevant public accession information and describe the computational workflow rather than committing private job credentials.
+
+---
+
+# Citation
+
+If this workflow contributes to a publication, cite the associated repository and the underlying KAAS/KEGG resources according to their current citation requirements.
+
+---
+
+# License
+
+This software is distributed under the license specified in the root repository.
