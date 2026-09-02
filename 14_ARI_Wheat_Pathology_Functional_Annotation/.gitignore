@@ -1,0 +1,49 @@
+# Local configuration
+config/resources.local.yaml
+config/.runtime_config.yaml
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Analysis outputs
+results/
+output/
+work/
+logs/
+
+# Local databases/resources
+databases/
+resources/
+*_data/
+
+# BLAST databases
+*.pin
+*.phr
+*.psq
+*.pog
+*.pto
+*.ptf
+*.pdb
+
+# FASTA/input data
+*.fasta
+*.fa
+*.faa
+*.fna
+
+# InterProScan output
+*.tsv
+*.xml
+*.gff3
+*.json
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
