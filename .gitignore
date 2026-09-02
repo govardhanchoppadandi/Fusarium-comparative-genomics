@@ -1,3 +1,28 @@
+config/resources.local.yaml
+config/.runtime_config.yaml
+
+results/
+
+*.obo
+interpro2go
+
+*.pin
+*.phr
+*.psq
+*.pog
+*.pot
+*.ptf
+*.pto
+
+*.fasta
+*.fa
+*.faa
+*.fna
+
+.venv/
+__pycache__/
+*.pyc
+*.pyo
 # ==========================================================
 # Genome files
 # ==========================================================
