@@ -17,144 +17,45 @@ The overall experimental and computational workflow used in this study is shown 
 Fusarium-comparative-genomics/
 │
 ├── 01_Genome_Quality/
-│   └── BUSCO/
-│       ├── README.md
-│       └── scripts/
-│           ├── run_busco_genomes.sh
-│           ├── run_busco_proteins.sh
-│           └── run_busco_proteins_resume.sh
-│
 ├── 02_Phylogeny/
-│   ├── README.md
-│   └── scripts/
-│       ├── alignment/
-│       ├── concatenation/
-│       ├── tree_inference/
-│       └── visualization/
-│
 ├── 03_OrthoFinder_6_Genomes/
-│   ├── README.md
-│   └── scripts/
-│       ├── prepare_proteomes/
-│       │   └── fix_headers.py
-│       ├── orthofinder/
-│       │   └── run_orthofinder_6.sh
-│       ├── single_copy_orthologues/
-│       │   └── extract_single_copy.sh
-│       ├── phylogenomics/
-│       │   ├── concat_by_species.py
-│       │   ├── validate_concatenation.py
-│       │   └── run_raxml_ng.sh
-│       └── visualization/
-│           ├── plot_orthology_gene_duplication.R
-│           └── circos/
-│               └── plot_duplication_circos.R
-│
 ├── 04_OrthoFinder_36_Genomes/
-│   ├── README.md
-│   └── scripts/
-│       ├── prepare_proteomes/
-│       ├── orthofinder/
-│       │   └── run_orthofinder_36.sh
-│       ├── tree_inference/
-│       │   ├── run_fusarium36_trees_checkpoint.sh
-│       │   ├── run_fusarium36_species_tree_checkpoint.sh
-│       │   └── run_fusarium36_species_tree_fast.sh
-│       ├── downstream_analysis/
-│       │   ├── run_fusarium36_step24.sh
-│       │   └── run_fusarium36_step24_corrected.sh
-│       └── visualization/
-│           ├── Circos/
-│           │   └── plot_circos.R
-│           └── Heatmap/
-│               └── plot_jaccard_heatmap.R
-│
 ├── 05_CAFE5_Gene_Family_Evolution/
-│   ├── README.md
-│   └── scripts/
-│       ├── run_CAFE5_Fusarium36.sh
-│       └── plot_CAFE5_Fusarium36_publication.R
-│
 ├── 06_ncRNA/
-│   ├── README.md
-│   └── scripts/
-│
 ├── 07_Transposable_Elements/
-│   ├── README.md
-│   ├── scripts/
-│   │   └── earl_grey/
-│   │       └── run_all_earlgrey.sh
-│   └── summary/
-│
 ├── 08_RIP_Analysis/
-│   ├── README.md
-│   └── scripts/
-│       ├── RIPCAL/
-│       │   └── run_RIP_all.sh
-│       └── summary/
-│           └── make_TE_RIP_results_table.py
-│
 ├── 09_McClintock/
-│   ├── README.md
-│   └── scripts/
-│
 ├── 10_KEGG/
-│   ├── README.md
-│   │
-│   ├── KAAS_KEGG_Analyzer/
-│   │   ├── README.md
-│   │   ├── app.py
-│   │   ├── kaas_kegg_pipeline.py
-│   │   ├── requirements.txt
-│   │   ├── run_app.sh
-│   │   ├── run_kaas_kegg.sh
-│   │   │
-│   │   ├── src/
-│   │   │   ├── __init__.py
-│   │   │   ├── fasta.py
-│   │   │   ├── kaas.py
-│   │   │   ├── kegg.py
-│   │   │   └── excel.py
-│   │   │
-│   │   ├── cache/
-│   │   │   └── .gitkeep
-│   │   ├── downloads/
-│   │   │   └── .gitkeep
-│   │   ├── output/
-│   │   │   └── .gitkeep
-│   │   └── results/
-│   │       └── .gitkeep
-│   │
-│   └── scripts/
-│       ├── KO_annotation/
-│       ├── pathway_annotation/
-│       └── summary/
-│
 ├── 11_Genome_Circos_Plot/
-│   ├── README.md
-│   └── scripts/
-│       ├── circos_input_builder/
-│       │   └── TNW1_complete_circos_builder.py
-│       └── circos_plot/
-│           └── TNW1_final_compact_circos.R
-│
 ├── 12_Telomere_Analysis/
-│   ├── README.md
-│   └── scripts/
-│       ├── 01_run_tidk.sh
-│       ├── 02_merge_tidk_results.py
-│       ├── 03_summarise_telomeres.py
-│       └── 04_generate_results_text.py
-│
 ├── 13_Effector_Prediction/
+│
+├── 14_ARI_Wheat_Pathology_Functional_Annotation/
+│   │
 │   ├── README.md
-│   └── scripts/
-│       └── fasta_preparation/
+│   │
+│   ├── app/
+│   │   └── pipeline.py
+│   │
+│   ├── modules/
+│   │   ├── blast_annotation.py
+│   │   ├── check_resources.py
+│   │   ├── excel_output.py
+│   │   ├── fasta_qc.py
+│   │   ├── go_annotation.py
+│   │   ├── goslim.py
+│   │   └── project_output.py
+│   │
+│   ├── config/
+│   │   ├── config.yaml
+│   │   └── resources.local.example.yaml
+│   │
+│   ├── install.sh
+│   ├── fusarium_annotator.sh
+│   └── .gitignore
 │
 ├── results/
 │   └── TE_RIP/
-│       ├── TE_RIP_all_genomes_summary.tsv
-│       └── TE_RIP_all_genomes_summary.xlsx
 │
 ├── workflow.png
 ├── README.md
