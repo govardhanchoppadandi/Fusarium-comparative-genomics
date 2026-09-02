@@ -11,127 +11,69 @@ The overall experimental and computational workflow used in this study is shown 
 ## Repository Structure
 
 ```text
+```text
 Fusarium-comparative-genomics/
-
 │
-
 ├── 01_Genome_Quality/
-
 │   └── BUSCO/
-
 │
-
 ├── 02_Phylogeny/
-
 │
-
 ├── 03_OrthoFinder_6_Genomes/
-
 │
-
 ├── 04_OrthoFinder_36_Genomes/
-
 │
-
 ├── 05_CAFE5_Gene_Family_Evolution/
-
 │
-
 ├── 06_ncRNA/
-
 │
-
 ├── 07_Transposable_Elements/
-
 │
-
 ├── 08_RIP_Analysis/
-
 │
-
 ├── 09_McClintock/
-
 │
-
 ├── 10_KEGG/
-
 │
-
 ├── 11_Genome_Circos_Plot/
-
 │
-
 ├── 12_Telomere_Analysis/
-
 │
-
 ├── 13_Effector_Prediction/
-
 │
-
 ├── 14_ARI_Wheat_Pathology_Functional_Annotation/
-
-│   │
-
 │   ├── README.md
-
 │   │
-
 │   ├── app/
-
 │   │   └── pipeline.py
-
 │   │
-
 │   ├── modules/
-
 │   │   ├── blast_annotation.py
-
 │   │   ├── check_resources.py
-
 │   │   ├── excel_output.py
-
 │   │   ├── fasta_qc.py
-
 │   │   ├── go_annotation.py
-
 │   │   ├── goslim.py
-
 │   │   └── project_output.py
-
 │   │
-
 │   ├── config/
-
 │   │   ├── config.yaml
-
 │   │   └── resources.local.example.yaml
-
 │   │
-
 │   ├── install.sh
-
 │   ├── fusarium_annotator.sh
-
 │   └── .gitignore
-
 │
-
 ├── results/
-
 │   └── TE_RIP/
-
 │
-
 ├── workflow.png
-
 ├── README.md
-
 ├── CITATION.cff
-
 ├── LICENSE
-
 └── .gitignore
+```
+
 ```
 
 ## Analysis Modules
