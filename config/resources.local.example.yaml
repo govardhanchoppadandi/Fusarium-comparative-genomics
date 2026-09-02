@@ -1,0 +1,14 @@
+# Copy this file to:
+#
+# config/resources.local.yaml
+#
+# Then change the paths for the local installation.
+
+resources:
+  go_obo: "/PATH/TO/go-basic.obo"
+  goslim_obo: "/PATH/TO/goslim_generic.obo"
+  interpro2go: "/PATH/TO/interpro2go.txt"
+
+  interproscan_datadir: "/PATH/TO/interproscan6_data"
+
+  blast_database: "/PATH/TO/swissprot/swissprot"

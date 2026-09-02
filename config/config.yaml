@@ -1,0 +1,45 @@
+project:
+  name: Fusarium
+  organism: Fusarium
+  taxon: Fungi
+
+input:
+  fasta: ""
+
+interproscan:
+  enabled: true
+  reuse_existing: false
+  existing_result: ""
+  datadir: ""
+  repository: "https://github.com/ebi-pf-team/interproscan6"
+  profile: "docker"
+  goterms: true
+  pathways: true
+  formats: "tsv"
+  max_workers: 4
+
+blast:
+  enabled: true
+  database: ""
+  database_name: "UniProtKB/Swiss-Prot"
+  evalue: 1.0e-5
+  max_target_seqs: 5
+  max_hsps: 1
+
+resources:
+  go_obo: ""
+  goslim_obo: ""
+  interpro2go: ""
+  interproscan_datadir: ""
+  blast_database: ""
+
+settings:
+  cpus: 4
+  resume: true
+  create_excel: true
+  copy_input_fasta: true
+
+output:
+  directory: ""
+  excel_file: "Fusarium_Protein_Annotation.xlsx"
+  blast_file: "BLAST_SwissProt.tsv"
