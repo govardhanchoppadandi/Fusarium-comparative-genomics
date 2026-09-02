@@ -13,6 +13,7 @@ The overall experimental and computational workflow used in this study is shown 
 ## Repository Structure
 
 ```text
+```text
 Fusarium-comparative-genomics/
 │
 ├── 01_Genome_Quality/
@@ -104,8 +105,23 @@ Fusarium-comparative-genomics/
 │   │   ├── README.md
 │   │   ├── app.py
 │   │   ├── kaas_kegg_pipeline.py
-│   │   ├── run_app.sh
 │   │   ├── requirements.txt
+│   │   ├── run_app.sh
+│   │   ├── run_kaas_kegg.sh
+│   │   │
+│   │   ├── src/
+│   │   │   ├── __init__.py
+│   │   │   ├── fasta.py
+│   │   │   ├── kaas.py
+│   │   │   ├── kegg.py
+│   │   │   └── excel.py
+│   │   │
+│   │   ├── cache/
+│   │   │   └── .gitkeep
+│   │   ├── downloads/
+│   │   │   └── .gitkeep
+│   │   ├── output/
+│   │   │   └── .gitkeep
 │   │   └── results/
 │   │       └── .gitkeep
 │   │
