@@ -99,6 +99,16 @@ Fusarium-comparative-genomics/
 │
 ├── 10_KEGG/
 │   ├── README.md
+│   │
+│   ├── KAAS_KEGG_Analyzer/
+│   │   ├── README.md
+│   │   ├── app.py
+│   │   ├── kaas_kegg_pipeline.py
+│   │   ├── run_app.sh
+│   │   ├── requirements.txt
+│   │   └── results/
+│   │       └── .gitkeep
+│   │
 │   └── scripts/
 │       ├── KO_annotation/
 │       ├── pathway_annotation/
