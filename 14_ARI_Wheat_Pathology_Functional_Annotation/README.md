@@ -1,712 +1,810 @@
 # ARI Wheat Pathology Functional Annotation Suite
 
-Functional annotation pipeline for fungal protein FASTA sequences.
+**Functional annotation pipeline for fungal protein FASTA sequences**
 
-Developed at:
+Developed by:
+
+**Dr. Sudhir Navathe** ,
+**Govardhan Choppadandi**
 
 Agharkar Research Institute, Pune
 Wheat Pathology Laboratory
-
-Developed by:
-- Dr. Sudhir Navathe
-- Govardhan Choppadandi
 
 ---
 
 ## 1. Overview
 
-The ARI Wheat Pathology Functional Annotation Suite performs functional annotation of fungal protein sequences using:
+The ARI Wheat Pathology Functional Annotation Suite is a reproducible command-line workflow for functional annotation of fungal protein sequences.
 
-- FASTA quality control
-- BLASTP against UniProtKB/Swiss-Prot
-- InterProScan
-- InterPro-derived GO annotations
-- GO ontology processing
-- GO-Slim classification
-- Functional annotation table generation
-- Excel output
+The pipeline performs:
 
-The software is provided as source code.
+1. FASTA quality control
+2. InterProScan-based protein functional annotation
+3. InterPro/GO annotation
+4. GO-Slim classification
+5. BLASTP similarity searches against UniProtKB/Swiss-Prot
+6. Integrated Excel output
+7. Project-organized raw and processed results
 
-Large external databases and software resources are NOT included in this GitHub repository.
-
-Users must install/download the required resources locally and provide their paths in:
-
-    config/resources.local.yaml
+The pipeline is designed primarily for fungal/Fusarium protein FASTA datasets but can be used with other fungal protein datasets.
 
 ---
 
-# 2. System requirements
+# 2. Important: External resources are required
 
-Recommended environment:
+The GitHub repository contains the **pipeline software and configuration templates**.
 
-- Ubuntu 22.04/24.04
-- WSL2 Ubuntu is supported
-- Internet connection
-- Python 3
-- Git
-- BLAST+
-- InterProScan
-- Docker
-- Sufficient disk space for databases
-- Sufficient RAM/CPU for InterProScan and BLAST
+It does **not** contain the large external biological databases.
 
-For large fungal proteomes, SSD storage and adequate RAM are strongly recommended.
+Before running the pipeline, the user must install/download:
+
+### Required software
+
+* Ubuntu/Linux or WSL2 Ubuntu
+* Python 3
+* Nextflow
+* Docker or another supported container runtime
+* BLAST+ command-line tools
+
+### Required biological resources
+
+* InterProScan 6 data
+* Gene Ontology (`go-basic.obo`)
+* GO-Slim (`goslim_generic.obo`)
+* InterPro2GO mapping
+* UniProtKB/Swiss-Prot BLAST protein database
+
+The required databases can be large. **Do not place these databases inside the GitHub repository.**
 
 ---
 
-# 3. Clone the repository
+# 3. System requirements
 
-Clone the main repository:
+Recommended:
 
-    git clone https://github.com/govardhanchoppadandi/Fusarium-comparative-genomics.git
+* Linux or WSL2 Ubuntu
+* Internet connection during software/database installation
+* Sufficient disk space for InterProScan data and Swiss-Prot
+* At least 4 CPU threads recommended
+* Additional RAM/storage may be required for large fungal proteomes
 
-Enter the annotation folder:
+For large protein datasets, use a workstation/server with more CPU, RAM and storage than the minimum requirements.
 
-    cd Fusarium-comparative-genomics/14_ARI_Wheat_Pathology_Functional_Annotation
+---
+
+# 4. Clone the repository
+
+Clone the complete comparative-genomics repository:
+
+```bash
+cd ~
+git clone https://github.com/govardhanchoppadandi/Fusarium-comparative-genomics.git
+```
+
+Enter the functional annotation directory:
+
+```bash
+cd ~/Fusarium-comparative-genomics/14_ARI_Wheat_Pathology_Functional_Annotation
+```
 
 Check the files:
 
-    find . -maxdepth 3 -type f | sort
+```bash
+find . -maxdepth 3 -type f | sort
+```
 
 You should see:
 
-    app/pipeline.py
-    config/config.yaml
-    config/resources.local.example.yaml
-    fusarium_annotator.sh
-    install.sh
-    modules/blast_annotation.py
-    modules/check_resources.py
-    modules/excel_output.py
-    modules/fasta_qc.py
-    modules/go_annotation.py
-    modules/goslim.py
-    modules/project_output.py
-    README.md
+```text
+README.md
+.gitignore
+install.sh
+fusarium_annotator.sh
+app/pipeline.py
+config/config.yaml
+config/resources.local.example.yaml
+modules/blast_annotation.py
+modules/check_resources.py
+modules/excel_output.py
+modules/fasta_qc.py
+modules/go_annotation.py
+modules/goslim.py
+modules/project_output.py
+```
 
 ---
 
-# 4. Install Python dependencies
+# 5. Install Python dependencies
 
 Run:
 
-    chmod +x install.sh
-    ./install.sh
+```bash
+chmod +x install.sh
+./install.sh
+```
 
-The installer creates/uses the required Python environment and checks Python dependencies.
+The installation script checks/installs the Python requirements used by the pipeline.
 
 ---
 
-# 5. Required external resources
+# 6. Install BLAST+
 
-The pipeline requires the following resources.
+BLAST+ is required for the local Swiss-Prot similarity search.
 
-## A. BLAST+
+Check whether BLAST+ is already installed:
 
-BLASTP is required for protein similarity searches.
+```bash
+which blastp
+blastp -version
+```
 
-Check:
+For Ubuntu, BLAST+ can be installed through the Ubuntu/NCBI-supported installation route.
 
-    which blastp
-    blastp -version
+After installation, verify:
+
+```bash
+which blastp
+blastp -version
+```
+
+Expected:
+
+```text
+/usr/bin/blastp
+blastp: ...
+```
+
+NCBI provides BLAST+ packages for Linux and other platforms through its official BLAST distribution.
+See the NCBI BLAST installation documentation.
+
+---
+
+# 7. Download the UniProtKB/Swiss-Prot database
+
+The pipeline uses a **local BLAST database**.
+
+You must download the reviewed UniProtKB/Swiss-Prot protein FASTA and create a BLAST database from it.
+
+Create a dedicated directory outside the Git repository:
+
+```bash
+mkdir -p ~/databases/swissprot
+cd ~/databases/swissprot
+```
+
+Download the current reviewed Swiss-Prot FASTA from UniProt.
+
+After downloading the FASTA, create the BLAST database using:
+
+```bash
+makeblastdb \
+  -in uniprot_sprot.fasta \
+  -dbtype prot \
+  -parse_seqids \
+  -out swissprot
+```
+
+Verify:
+
+```bash
+ls -lh swissprot.*
+```
+
+You should have files similar to:
+
+```text
+swissprot.pin
+swissprot.psq
+swissprot.phr
+```
+
+The configuration path must point to the **database prefix**:
+
+```text
+/home/YOUR_USERNAME/databases/swissprot/swissprot
+```
+
+NOT:
+
+```text
+swissprot.pin
+```
+
+and NOT merely the FASTA file.
+
+---
+
+# 8. Install InterProScan 6
+
+InterProScan 6 is required for protein family/domain/function annotation.
+
+The current InterProScan 6 workflow uses:
+
+* Nextflow
+* Docker/Podman/Singularity/Apptainer
+* InterProScan workflow/data
+
+Install Nextflow according to the official InterProScan 6 requirements.
+
+Verify:
+
+```bash
+nextflow -version
+```
+
+Install Docker and verify:
+
+```bash
+docker --version
+```
+
+Test Docker:
+
+```bash
+docker run --rm hello-world
+```
+
+---
+
+# 9. Download InterProScan 6 data
+
+InterProScan 6 automatically retrieves the required workflow/database data when executed.
+
+Create a dedicated data directory outside the Git repository:
+
+```bash
+mkdir -p ~/databases/interproscan6
+```
+
+A recommended test is:
+
+```bash
+cd ~/databases/interproscan6
+
+nextflow run ebi-pf-team/interproscan6 \
+  -r 6.0.1 \
+  -profile docker,test \
+  --datadir data \
+  --interpro latest
+```
+
+This downloads the required InterPro/member-database data into the specified data directory.
+
+Verify that the data directory has been populated:
+
+```bash
+du -sh ~/databases/interproscan6/data
+```
+
+The exact disk usage can change with the InterProScan/data release. Keep sufficient free disk space.
+
+For reproducible research, pin the InterProScan and InterPro data versions rather than always using `latest`.
+
+---
+
+# 10. Download Gene Ontology
+
+The pipeline requires:
+
+```text
+go-basic.obo
+```
+
+Create a GO directory:
+
+```bash
+mkdir -p ~/databases/go
+cd ~/databases/go
+```
+
+Download the current `go-basic.obo` from the official Gene Ontology download site.
+
+Verify:
+
+```bash
+ls -lh go-basic.obo
+```
+
+---
+
+# 11. Download GO-Slim
+
+The pipeline also requires:
+
+```text
+goslim_generic.obo
+```
+
+Download the current Generic GO-Slim OBO file from the official Gene Ontology GO subset resources.
+
+Place it in:
+
+```text
+~/databases/go/goslim_generic.obo
+```
+
+Verify:
+
+```bash
+ls -lh ~/databases/go/goslim_generic.obo
+```
+
+---
+
+# 12. Download InterPro2GO
+
+The pipeline uses the InterPro-to-GO mapping:
+
+```text
+interpro2go
+```
+
+Create:
+
+```bash
+mkdir -p ~/databases/go
+```
+
+Download the current `interpro2go` mapping from the official InterPro/EBI resource.
+
+Place it at:
+
+```text
+~/databases/go/interpro2go
+```
+
+Verify:
+
+```bash
+ls -lh ~/databases/go/interpro2go
+```
+
+---
+
+# 13. Recommended local database layout
+
+A recommended layout is:
+
+```text
+/home/YOUR_USERNAME/
+├── databases/
+│   ├── go/
+│   │   ├── go-basic.obo
+│   │   ├── goslim_generic.obo
+│   │   └── interpro2go
+│   │
+│   ├── swissprot/
+│   │   ├── uniprot_sprot.fasta
+│   │   ├── swissprot.pin
+│   │   ├── swissprot.psq
+│   │   └── swissprot.phr
+│   │
+│   └── interproscan6/
+│       └── data/
+│           └── [InterProScan data]
+│
+└── Fusarium-comparative-genomics/
+    └── 14_ARI_Wheat_Pathology_Functional_Annotation/
+```
+
+Keep the databases outside GitHub.
+
+---
+
+# 14. Configure the pipeline
+
+Inside the annotation directory:
+
+```bash
+cd ~/Fusarium-comparative-genomics/14_ARI_Wheat_Pathology_Functional_Annotation
+```
+
+Create the local configuration:
+
+```bash
+cp config/resources.local.example.yaml config/resources.local.yaml
+```
+
+Edit it:
+
+```bash
+nano config/resources.local.yaml
+```
+
+Set the paths to your actual local installation.
 
 Example:
 
-    /usr/bin/blastp
+```yaml
+resources:
+  go_obo: "/home/YOUR_USERNAME/databases/go/go-basic.obo"
+  goslim_obo: "/home/YOUR_USERNAME/databases/go/goslim_generic.obo"
+  interpro2go: "/home/YOUR_USERNAME/databases/go/interpro2go"
 
-If BLAST+ is not installed, install it through the Ubuntu package manager:
+  interproscan_datadir: "/home/YOUR_USERNAME/databases/interproscan6/data"
 
-    sudo apt update
-    sudo apt install -y ncbi-blast+
+  blast_database: "/home/YOUR_USERNAME/databases/swissprot/swissprot"
+```
 
-Then verify:
+Replace:
 
-    blastp -version
+```text
+YOUR_USERNAME
+```
 
----
-
-# 6. UniProtKB/Swiss-Prot BLAST database
-
-The pipeline performs local BLASTP searches against UniProtKB/Swiss-Prot.
-
-A local BLAST database is required.
-
-The configured database path must point to the BLAST database prefix, for example:
-
-    /path/to/swissprot/swissprot
-
-The database should contain files such as:
-
-    swissprot.pin
-    swissprot.phr
-    swissprot.psq
-
-Check the database:
-
-    ls -lh /path/to/swissprot/
-
-The exact current UniProt download procedure may change. Use the official UniProt download resources to obtain the reviewed Swiss-Prot protein dataset and prepare the local BLAST database.
-
-After obtaining the Swiss-Prot FASTA, create the BLAST database using:
-
-    makeblastdb \
-      -in swissprot.fasta \
-      -dbtype prot \
-      -parse_seqids \
-      -out swissprot
-
-Then verify:
-
-    ls -lh swissprot.*
-
----
-
-# 7. Gene Ontology ontology
-
-Download the current:
-
-    go-basic.obo
-
-The recommended GO basic ontology is suitable for most GO-based annotation tools.
-
-Place it somewhere accessible, for example:
-
-    ~/databases/go/go-basic.obo
-
-Verify:
-
-    ls -lh ~/databases/go/go-basic.obo
-
----
-
-# 8. GO-Slim ontology
-
-Download:
-
-    goslim_generic.obo
-
-Place it somewhere accessible, for example:
-
-    ~/databases/go/goslim_generic.obo
-
-Verify:
-
-    ls -lh ~/databases/go/goslim_generic.obo
-
----
-
-# 9. InterPro2GO
-
-Download the current InterPro2GO mapping file.
-
-Place it somewhere accessible, for example:
-
-    ~/databases/go/interpro2go
-
-Verify:
-
-    ls -lh ~/databases/go/interpro2go
-
----
-
-# 10. InterProScan
-
-InterProScan is required for protein domain/family/function analysis.
-
-This pipeline expects a local InterProScan installation/data resource.
-
-The configuration supports:
-
-    profile: "docker"
-
-The InterProScan software and its databases are NOT included in this GitHub repository because they are large external resources.
-
-Install/configure InterProScan according to the current InterProScan documentation/repository.
-
-The project configuration expects an InterProScan data directory such as:
-
-    ~/databases/interproscan6_data
-
-The exact location depends on how InterProScan is installed.
-
-Verify the installation/data directory before running the pipeline.
-
----
-
-# 11. Create local resource configuration
-
-IMPORTANT:
-
-Do NOT edit or upload the example file.
-
-Create your local configuration:
-
-    cp config/resources.local.example.yaml config/resources.local.yaml
-
-Open it:
-
-    nano config/resources.local.yaml
-
-Replace the example paths with the actual paths on your computer.
-
-Example:
-
-    resources:
-      go_obo: "/home/USERNAME/databases/go/go-basic.obo"
-      goslim_obo: "/home/USERNAME/databases/go/goslim_generic.obo"
-      interpro2go: "/home/USERNAME/databases/go/interpro2go"
-      interproscan_datadir: "/home/USERNAME/databases/interproscan6_data"
-      blast_database: "/home/USERNAME/databases/swissprot/swissprot"
-
-IMPORTANT:
-
-Do not copy these example paths blindly.
-
-Use the real paths on your system.
-
----
-
-# 12. Why resources.local.yaml is not included
-
-The file:
-
-    config/resources.local.yaml
-
-contains machine-specific paths.
+with your actual Linux username.
 
 For example:
 
-    /home/username/...
-    /mnt/d/...
-    /data/...
+```text
+/home/govardhan/databases/go/go-basic.obo
+```
 
-These paths are different for every user.
-
-Therefore the repository contains:
-
-    config/resources.local.example.yaml
-
-but users create:
-
-    config/resources.local.yaml
-
-locally.
-
-The local configuration file should NOT be committed to GitHub.
+Do not copy the example paths literally.
 
 ---
 
-# 13. Test all resources before running
+# 15. Check that all resources exist
 
-From the annotation directory run:
+Run:
 
-    ./fusarium_annotator.sh
+```bash
+test -f config/resources.local.yaml && echo "Local configuration: OK"
 
-The program first performs a resource check.
+test -f /home/YOUR_USERNAME/databases/go/go-basic.obo && echo "GO: OK"
 
-The resource check should show:
+test -f /home/YOUR_USERNAME/databases/go/goslim_generic.obo && echo "GO-Slim: OK"
 
-    [OK] GO ontology
-    [OK] GO-Slim ontology
-    [OK] InterPro2GO
-    [OK] blastp
-    [OK] InterProScan
-    [OK] BLAST database
+test -f /home/YOUR_USERNAME/databases/go/interpro2go && echo "InterPro2GO: OK"
 
-If any required resource is shown as:
+test -d /home/YOUR_USERNAME/databases/interproscan6/data && echo "InterProScan data: OK"
 
-    [MISSING]
+test -f /home/YOUR_USERNAME/databases/swissprot/swissprot.pin && echo "Swiss-Prot BLAST database: OK"
+```
 
-stop and correct the corresponding path in:
+Also verify BLAST:
 
-    config/resources.local.yaml
-
-Do not proceed until the required resources are available.
+```bash
+which blastp
+blastp -version
+```
 
 ---
 
-# 14. Input FASTA
+# 16. Prepare the input FASTA
 
 The input must be a protein FASTA file.
 
 Example:
 
-    /mnt/d/interpro/test_fasta.fasta
+```text
+/mnt/d/interpro/test_fasta.fasta
+```
 
-Check the file:
+Check the FASTA:
 
-    ls -lh /mnt/d/interpro/test_fasta.fasta
-
-Count proteins:
-
-    grep -c "^>" /mnt/d/interpro/test_fasta.fasta
-
-Example:
-
-    248
+```bash
+grep -c "^>" /mnt/d/interpro/test_fasta.fasta
+```
 
 Inspect the first sequences:
 
-    head -20 /mnt/d/interpro/test_fasta.fasta
+```bash
+head -20 /mnt/d/interpro/test_fasta.fasta
+```
+
+The FASTA should contain protein sequences such as:
+
+```text
+>Fgram_0343|g1.t1
+RAARRSFHQGILTALRDDLSDTVEEQERF...
+```
 
 ---
 
-# 15. Running the pipeline
+# 17. Run the annotation pipeline
 
-The pipeline uses the FASTA path supplied through the configuration.
+From:
 
-Edit:
+```bash
+cd ~/Fusarium-comparative-genomics/14_ARI_Wheat_Pathology_Functional_Annotation
+```
 
-    config/config.yaml
+run:
 
-Set:
+```bash
+./fusarium_annotator.sh
+```
 
-    input:
-      fasta: "/mnt/d/interpro/test_fasta.fasta"
+The launcher will request/use the configured FASTA and local resources according to the pipeline configuration.
 
-Set the output directory if required, for example:
-
-    output:
-      directory: "/mnt/d/interpro/Fusarium_annotation_results"
-
-The exact output path may be changed according to the user's system.
-
-Then run:
-
-    ./fusarium_annotator.sh
-
----
-
-# 16. FASTA quality control
-
-The pipeline validates the input FASTA before annotation.
-
-It reports:
-
-- Number of protein sequences
-- Total amino acids
-- Duplicate IDs
-- Sequence ID validity
-- Basic FASTA quality information
-
-Example:
-
-    Protein sequences : 248
-    Total aa          : 120628
-    Duplicate IDs     : 0
-
-If FASTA validation fails, correct the input FASTA before continuing.
-
----
-
-# 17. BLASTP analysis
-
-The pipeline runs BLASTP against the configured local UniProtKB/Swiss-Prot database.
-
-Default settings:
-
-    evalue: 1.0e-5
-    max_target_seqs: 5
-    max_hsps: 1
-
-The BLAST database path must be valid.
+The FASTA path must point to the actual input file.
 
 For example:
 
-    resources:
-      blast_database: "/home/USERNAME/databases/swissprot/swissprot"
-
-The path refers to the database prefix, not to a single .pin file.
-
-The following files should exist:
-
-    swissprot.pin
-    swissprot.phr
-    swissprot.psq
+```text
+/mnt/d/interpro/test_fasta.fasta
+```
 
 ---
 
-# 18. InterProScan analysis
+# 18. FASTA test dataset
 
-InterProScan analyses the protein sequences for conserved domains, families and functional signatures.
-
-The pipeline requests:
-
-    GO terms
-    pathways
-    TSV output
-
-InterProScan requires its own software/data resources.
-
-These resources are intentionally not stored in this GitHub repository.
-
----
-
-# 19. GO annotation
-
-GO information is generated/processed using:
-
-- GO ontology
-- InterPro2GO mappings
-- InterProScan-derived GO information
-
-The pipeline can process:
-
-- Molecular Function (MF)
-- Biological Process (BP)
-- Cellular Component (CC)
-
----
-
-# 20. GO-Slim
-
-GO-Slim provides a higher-level functional classification.
-
-The pipeline uses:
-
-    goslim_generic.obo
-
-GO-Slim results should be interpreted as broad functional categories rather than detailed protein-specific functional assignments.
-
----
-
-# 21. Output
-
-The pipeline creates a project output directory.
-
-Typical outputs include:
-
-    raw/
-    intermediate/
-    report/
-    results/
-
-The final Excel workbook is:
-
-    Fusarium_Protein_Annotation.xlsx
-
-The BLAST output is:
-
-    BLAST_SwissProt.tsv
-
-The exact output location is controlled by:
-
-    output.directory
-
----
-
-# 22. Example complete workflow
-
-Example FASTA:
-
-    /mnt/d/interpro/test_fasta.fasta
-
-Enter the project:
-
-    cd ~/Fusarium-comparative-genomics/14_ARI_Wheat_Pathology_Functional_Annotation
-
-Create local configuration:
-
-    cp config/resources.local.example.yaml config/resources.local.yaml
-
-Edit:
-
-    nano config/resources.local.yaml
-
-Check BLAST:
-
-    which blastp
-    blastp -version
-
-Check FASTA:
-
-    ls -lh /mnt/d/interpro/test_fasta.fasta
-    grep -c "^>" /mnt/d/interpro/test_fasta.fasta
-
-Run:
-
-    ./fusarium_annotator.sh
-
----
-
-# 23. Important: GitHub does not contain the databases
-
-This repository contains the pipeline software.
-
-It does NOT contain:
-
-- InterProScan databases
-- GO ontology files
-- GO-Slim ontology
-- InterPro2GO
-- UniProtKB/Swiss-Prot BLAST database
-- User FASTA files
-- Analysis results
-
-These files can be extremely large and/or are external resources.
-
-Users must obtain and configure them locally.
-
----
-
-# 24. Recommended project structure after installation
-
-A recommended local setup is:
-
-    ~/databases/
-    ├── go/
-    │   ├── go-basic.obo
-    │   ├── goslim_generic.obo
-    │   └── interpro2go
-    │
-    ├── swissprot/
-    │   ├── swissprot.pin
-    │   ├── swissprot.phr
-    │   └── swissprot.psq
-    │
-    └── interproscan6_data/
-
-The GitHub project remains separate:
-
-    ~/Fusarium-comparative-genomics/
-    └── 14_ARI_Wheat_Pathology_Functional_Annotation/
-
----
-
-# 25. Troubleshooting
-
-## Error: BLAST database not found
+A small test can be performed before analysing a complete proteome.
 
 Example:
 
-    FileNotFoundError: BLAST protein database not found: .pin
+```text
+/mnt/d/interpro/test_fasta.fasta
+```
 
-This means the configured BLAST database path is empty or incorrect.
+For the test dataset used during development:
 
-Check:
+```text
+Protein sequences: 248
+```
 
-    cat config/resources.local.yaml
-
-Then verify:
-
-    ls -lh /path/to/swissprot/
-
-Make sure:
-
-    swissprot.pin
-    swissprot.phr
-    swissprot.psq
-
-exist.
+The FASTA should pass the pipeline's FASTA QC before annotation begins.
 
 ---
 
-## Error: GO ontology missing
+# 19. Pipeline stages
 
-Check:
+The pipeline performs the following major stages:
 
-    ls -lh /path/to/go-basic.obo
-
-Then update:
-
-    config/resources.local.yaml
-
----
-
-## Error: GO-Slim ontology missing
-
-Check:
-
-    ls -lh /path/to/goslim_generic.obo
-
-Then update:
-
-    config/resources.local.yaml
-
----
-
-## Error: InterPro2GO missing
-
-Check:
-
-    ls -lh /path/to/interpro2go
-
-Then update:
-
-    config/resources.local.yaml
+```text
+INPUT PROTEIN FASTA
+        │
+        ▼
+FASTA QUALITY CONTROL
+        │
+        ▼
+RESOURCE CHECK
+        │
+        ├───────────────┐
+        ▼               ▼
+INTERPROSCAN          BLASTP
+        │               │
+        ▼               ▼
+InterPro results     Swiss-Prot hits
+        │               │
+        ▼               │
+GO / GO-Slim           │
+        │               │
+        └───────┬───────┘
+                ▼
+        INTEGRATED ANNOTATION
+                │
+                ▼
+             EXCEL
+```
 
 ---
 
-## Error: InterProScan missing
+# 20. Output
 
-Check the InterProScan installation and data directory.
+The pipeline creates a project-specific results directory.
 
-Then update:
+Typical outputs include:
 
-    interproscan_datadir:
+```text
+results/
+└── Fusarium/
+    ├── raw/
+    ├── InterProScan/
+    ├── BLAST/
+    ├── GO/
+    ├── GO-Slim/
+    ├── reports/
+    └── Fusarium_Protein_Annotation.xlsx
+```
 
-with the correct local path.
+The exact output structure depends on the pipeline version and completed analysis stages.
 
----
+The main integrated spreadsheet is:
 
-# 26. Do not upload local resources
+```text
+Fusarium_Protein_Annotation.xlsx
+```
 
-Never commit:
+The BLAST output is:
 
-    config/resources.local.yaml
+```text
+BLAST_SwissProt.tsv
+```
 
-    config/.runtime_config.yaml
-
-    .venv/
-
-    databases/
-
-    results/
-
-    *.pin
-    *.phr
-    *.psq
-
-    *.pyc
-    __pycache__/
-
-User FASTA files and analysis results should also remain outside the source repository unless specifically intended for publication.
-
----
-
-# 27. Reproducibility
-
-For reproducible analyses, record:
-
-- Pipeline Git commit/version
-- Input FASTA filename
-- Number of proteins
-- GO release/version
-- GO-Slim release/version
-- InterProScan version
-- InterProScan database version
-- UniProt/Swiss-Prot release
-- BLAST+ version
-- BLAST parameters
-- Date of analysis
-- CPU/thread settings
+Raw/intermediate results are retained for reproducibility.
 
 ---
 
-# 28. Citation
+# 21. Resource troubleshooting
 
-Citation:
+If the pipeline reports:
 
-To be updated after publication.
+```text
+[MISSING] GO ontology
+```
+
+check:
+
+```bash
+ls -lh /path/to/go-basic.obo
+```
+
+If it reports:
+
+```text
+[MISSING] GO-Slim ontology
+```
+
+check:
+
+```bash
+ls -lh /path/to/goslim_generic.obo
+```
+
+If it reports:
+
+```text
+[MISSING] InterPro2GO
+```
+
+check:
+
+```bash
+ls -lh /path/to/interpro2go
+```
+
+If BLAST reports:
+
+```text
+BLAST protein database not found
+```
+
+check that the configured database prefix exists:
+
+```bash
+ls -lh /path/to/swissprot/swissprot.*
+```
+
+You should have at least:
+
+```text
+swissprot.pin
+swissprot.psq
+swissprot.phr
+```
+
+If InterProScan data is missing, check:
+
+```bash
+ls -lah /path/to/interproscan6/data
+```
 
 ---
 
-# 29. Authors
+# 22. Important GitHub/repository rule
 
-Dr. Sudhir Navathe
-Govardhan Choppadandi
+Do NOT commit local database/resource files.
 
-Agharkar Research Institute, Pune
-Wheat Pathology Laboratory
+The following files are intentionally excluded:
 
+```text
+config/resources.local.yaml
+config/.runtime_config.yaml
+results/
+*.obo
+interpro2go
+Swiss-Prot databases
+InterProScan data
+FASTA input files
+```
+
+Each user creates their own:
+
+```text
+config/resources.local.yaml
+```
+
+from:
+
+```text
+config/resources.local.example.yaml
+```
+
+---
+
+# 23. Reproducibility
+
+For published analyses, record:
+
+* Pipeline Git commit
+* InterProScan version
+* InterPro data release
+* GO ontology version/date
+* GO-Slim version/date
+* InterPro2GO version/date
+* UniProtKB/Swiss-Prot release
+* BLAST+ version
+* Nextflow version
+* Container runtime/version
+* Input FASTA filename
+* Number of protein sequences
+* CPU/thread count
+
+This allows the analysis to be reproduced later.
+
+---
+
+# 24. Official resources
+
+InterProScan 6:
+
+https://github.com/ebi-pf-team/interproscan6
+
+InterProScan downloads:
+
+https://www.ebi.ac.uk/interpro/download/InterProScan/
+
+Gene Ontology:
+
+https://geneontology.org/
+
+GO ontology downloads:
+
+https://geneontology.org/docs/download-ontology/
+
+GO subsets:
+
+https://geneontology.org/docs/go-subset-guide/
+
+UniProt:
+
+https://www.uniprot.org/
+
+NCBI BLAST:
+
+https://www.ncbi.nlm.nih.gov/books/NBK569861/
+
+---
+
+# 25. Quick-start checklist
+
+Before running the pipeline, confirm:
+
+```text
+[ ] Ubuntu/WSL available
+[ ] Internet available for installation/downloads
+[ ] Python installed
+[ ] BLAST+ installed
+[ ] blastp works
+[ ] Nextflow installed
+[ ] Docker/container runtime installed
+[ ] InterProScan 6 available
+[ ] InterProScan data downloaded
+[ ] go-basic.obo downloaded
+[ ] goslim_generic.obo downloaded
+[ ] interpro2go downloaded
+[ ] Swiss-Prot FASTA downloaded
+[ ] Swiss-Prot BLAST database created
+[ ] resources.local.yaml configured
+[ ] FASTA file available
+[ ] FASTA contains protein sequences
+[ ] FASTA path is correct
+```
+
+Then run:
+
+```bash
+./fusarium_annotator.sh
+```
+
+---
+
+## Citation
+
+If you use this pipeline, cite the underlying resources and software used in your analysis, including InterProScan, InterPro, Gene Ontology, UniProtKB/Swiss-Prot and BLAST+.
+
+Pipeline citation:
+
+**To be updated after publication.**
