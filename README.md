@@ -73,7 +73,6 @@ Fusarium-comparative-genomics/
 └── .gitignore
 ```
 
-```
 
 ## Analysis Modules
 
