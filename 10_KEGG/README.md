@@ -1,31 +1,36 @@
-# KEGG Analysis
+# KEGG Functional Annotation
 
-This directory contains KEGG/KO annotation workflows used in the comparative genomic analysis of wheat-infecting *Fusarium* species.
+This directory contains reproducible KEGG and KO annotation workflows used for comparative genomic analysis of wheat-infecting *Fusarium* species.
 
-## Modules
+## KAAS → KEGG Pathway Analyzer
 
-### KAAS → KEGG Pathway Analyzer
+The `KAAS_KEGG_Analyzer` is a local Python/Streamlit application for converting completed KEGG Automatic Annotation Server (KAAS) results into structured KO, EC, KEGG pathway, and protein-level annotation tables.
 
-`KAAS_KEGG_Analyzer/` provides a local Python/Streamlit workflow for processing completed KEGG Automatic Annotation Server (KAAS) results.
+The workflow is designed for fungal protein datasets and can be used for large-scale comparative genomic analyses.
 
-The application integrates:
+### Main functions
 
-1. Completed KAAS result retrieval
-2. KAAS `query.ko` parsing
-3. Original protein FASTA identification
-4. Protein-to-KO matching
-5. KO-to-EC annotation
-6. KEGG pathway annotation
-7. Pathway-level summaries
-8. Excel workbook generation
+The analyzer performs:
 
-The workflow is designed to convert a completed KAAS annotation result and the corresponding original protein FASTA file into a structured Excel report suitable for downstream comparative genomic analysis.
+1. Retrieval of a completed KAAS `query.ko` result
+2. Parsing of KAAS protein-to-KO assignments
+3. Identification and validation of protein IDs against the original FASTA
+4. Identification of proteins with and without KO assignments
+5. Extraction of unique KO identifiers
+6. Retrieval of KO information from KEGG
+7. Retrieval of EC/enzyme annotations
+8. Retrieval of KEGG pathway annotations
+9. Mapping of KO and pathway information back to proteins
+10. Generation of summary tables
+11. Export of results to an Excel workbook
+12. KEGG response caching for efficient and resumable analysis
 
-## Directory
+## Directory structure
 
 ```text
 10_KEGG/
 ├── README.md
+│
 ├── KAAS_KEGG_Analyzer/
 │   ├── README.md
 │   ├── app.py
@@ -33,107 +38,34 @@ The workflow is designed to convert a completed KAAS annotation result and the c
 │   ├── requirements.txt
 │   ├── run_app.sh
 │   ├── run_kaas_kegg.sh
+│   │
 │   └── src/
 │       ├── __init__.py
 │       ├── fasta.py
 │       ├── kaas.py
 │       ├── kegg.py
 │       └── excel.py
+│
 └── scripts/
     ├── KO_annotation/
     ├── pathway_annotation/
     └── summary/
 ```
 
-## KAAS → KEGG Analyzer
+## Reproducibility
 
-The analyzer accepts:
+User-specific input files, KAAS result URLs, downloaded KAAS results, KEGG cache files, and generated Excel outputs are not included in the repository.
 
-* A completed KAAS result URL
-* The original protein FASTA file
-* An output directory
-* KEGG API batch size
-* Delay between KEGG requests
+Users should provide their own protein FASTA file and completed KAAS result URL when running the analyzer.
 
-### Recommended environment
+For detailed installation and usage instructions, see:
 
-The application is intended to run locally under Ubuntu/WSL using Python 3.12 and a dedicated Conda environment.
+`KAAS_KEGG_Analyzer/README.md`
 
-### Installation
+## External resources
 
-```bash
-conda create -n kaas_env python=3.12
-conda activate kaas_env
-```
-
-Clone or download the repository and enter:
-
-```bash
-cd 10_KEGG/KAAS_KEGG_Analyzer
-```
-
-Install the required Python packages:
-
-```bash
-pip install -r requirements.txt
-```
-
-### Run the Streamlit application
-
-```bash
-chmod +x run_app.sh
-./run_app.sh
-```
-
-The application will start locally. Open the displayed local address in a web browser, for example:
-
-```text
-http://localhost:8501
-```
-
-The exact port may change if another Streamlit application is already running.
-
-### Command-line workflow
-
-For non-interactive execution:
-
-```bash
-chmod +x run_kaas_kegg.sh
-./run_kaas_kegg.sh
-```
-
-The workflow requires a valid completed KAAS result URL and the corresponding original protein FASTA file.
-
-### Input requirements
-
-The FASTA identifiers should correspond to the protein sequences submitted to KAAS. The completed KAAS result must be accessible using the supplied KAAS result URL and any required access information.
-
-Example FASTA path under Ubuntu/WSL:
-
-```text
-/mnt/d/interpro/combind fasta.faa
-```
-
-Example output directory:
-
-```text
-KAAS_KEGG_Results
-```
-
-### Output
-
-The workflow generates structured annotation tables and an Excel workbook containing the KAAS/KO and KEGG pathway analysis.
-
-Generated files should be stored locally and are intentionally excluded from the GitHub repository.
-
-### Reproducibility
-
-The repository contains the application source code, supporting modules, installation requirements, and execution scripts required to reproduce the analysis. User-specific KAAS URLs, protein FASTA files, downloaded KEGG data, caches, and generated result files are not included in the repository.
-
-### External resources
-
-The workflow uses the KEGG database and KEGG-related web services. Users should comply with the applicable KEGG usage conditions and rate limits when running the analysis.
+The workflow uses the KEGG database and associated KEGG web services. Users should follow the applicable KEGG terms of use, access policies, and request-rate limitations.
 
 ## Citation
 
-If this workflow is used in a publication, please cite this repository and the relevant KAAS/KEGG resources.
+If this workflow contributes to published research, please cite this repository together with the relevant KAAS and KEGG resources.
