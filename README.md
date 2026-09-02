@@ -1,6 +1,3 @@
-So the figure section and repository structure should be formatted like this:
-
-:::writing{variant="document" id="31857"}
 ## Overall Workflow
 
 The overall experimental and computational workflow used in this study is shown below.
